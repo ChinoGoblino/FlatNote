@@ -1,56 +1,121 @@
-body {
-
-    font-family: Arial, sans-serif;
-
+/* General Reset */
+* {
+    box-sizing: border-box;
     margin: 0;
-
     padding: 0;
-
 }
 
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
 
+/* Container for the entire layout */
 .container {
-
     display: flex;
-
-    height: 100vh;
-
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-
+/* Sidebar for the song list */
 .song-list {
-
     width: 30%;
-
     background-color: #f0f0f0;
-
     padding: 20px;
-
+    border-right: 1px solid #ddd;
 }
 
+.song-list h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #444;
+}
 
+.song-list ul {
+    list-style-type: none;
+}
+
+.song-list li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.song-list li:hover {
+    background-color: #ccc;
+}
+
+/* Main content for the selected song */
 .main-content {
-
     width: 70%;
-
     padding: 20px;
-
 }
 
-
-button {
-
-    margin: 10px 0;
-
-    padding: 5px 10px;
-
+.main-content h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #444;
 }
-
 
 #lyrics {
-
     white-space: pre-wrap;
-
     margin: 20px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 
+button {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Dates display */
+#dates p {
+    font-size: 14px;
+    color: #666;
+}
+
+#dates span {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .song-list,
+    .main-content {
+        width: 100%;
+    }
 }
