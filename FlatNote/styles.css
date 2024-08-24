@@ -76,25 +76,31 @@ body {
     border-radius: 4px;
 }
 
-button {
-    display: inline-block;
-    margin: 10px 0;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+input[type="file"] {
+    display: none;
 }
 
+/* Style the custom file upload button */
+.custom-file-upload,
+button {
+    background-color: #007bff;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 4px;
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    margin-left: 10px;
+    text-align: center;
+    min-width: 100px; /* Ensures both buttons have the same minimum width */
+    white-space: nowrap; /* Prevents the text from wrapping */
+}
+
+.custom-file-upload:hover,
 button:hover {
     background-color: #0056b3;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
 }
 
 /* Dates display */

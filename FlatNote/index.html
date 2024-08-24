@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+1<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,14 @@
         <div class="song-list">
             <h2>Songs</h2>
             <ul id="songList"></ul>
-            <button id="addSongBtn">Add Song</button>
+            <form id="uploadForm">
+                <!-- Custom button that triggers the hidden file input -->
+                <label for="mp3File" class="custom-file-upload">
+                    Browse...
+                </label>
+                <input type="file" id="mp3File" accept="audio/mpeg" />
+                <button type="submit">Upload</button>
+            </form>
         </div>
         <div class="main-content">
             <h1 id="songTitle">Select a Song</h1>
@@ -24,6 +31,6 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

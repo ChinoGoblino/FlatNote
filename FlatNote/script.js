@@ -1,3 +1,4 @@
+import * as musicMetadata from 'music-metadata-browser';
 // Load songs from localStorage or initialize an empty array
 let songs = JSON.parse(localStorage.getItem('songs')) || [];
 let currentSong = null;
@@ -14,7 +15,7 @@ const firstRecordedElement = document.getElementById('firstRecorded');
 const lastRecordedElement = document.getElementById('lastRecorded');
 
 // Event listeners
-document.getElementById('addSongBtn').addEventListener('click', addSong);
+document.getElementById('uploadForm').addEventListener('submit', addSong);
 recordBtn.addEventListener('click', toggleRecording);
 playBtn.addEventListener('click', playRecording);
 
@@ -23,31 +24,49 @@ updateSongList();
 recordBtn.disabled = true;
 playBtn.disabled = true;
 
-function addSong() {
-    const title = prompt('Enter song title:');
-    const lyrics = prompt('Enter song lyrics:');
-    
-    if (title && lyrics) {
-        const song = {
-            id: Date.now(),
-            title: title,
-            lyrics: lyrics,
-            recordings: []
-        };
+async function addSong(event) {
+    songs = [];
+    const fileInput = document.getElementById('mp3File');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert('Please select a file before uploading.');
+        return;
+    }
+
+    if (file.type !== 'audio/mpeg') {
+        alert('Please upload an MP3 file.');
+        return;
+    }
+
+    // Create a song object that includes metadata
+    const song = {
+        file: file,
+        metadata: {}
+    };
+    alert("Words");
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const metadata = await musicMetadata.parseBuffer(arrayBuffer, 'audio/mpeg');
+        song.metadata.title = metadata.common.title || 'N/A';
+        song.metadata.artist = metadata.common.artist || 'N/A';
         songs.push(song);
         saveSongs();
         updateSongList();
         alert('Song added successfully!');
-    } else {
-        alert('Title and lyrics are required to add a song.');
+    } catch (error) {
+        console.log('Error reading metadata:', error);
+        alert('Failed to read song metadata.');
     }
 }
 
 function updateSongList() {
     songListElement.innerHTML = '';
+
     songs.forEach(song => {
         const li = document.createElement('li');
-        li.textContent = song.title;
+        li.textContent = song.metadata.title || 'N/A';
+
         li.addEventListener('click', () => selectSong(song));
         songListElement.appendChild(li);
     });
@@ -123,5 +142,25 @@ function updateDates() {
 }
 
 function saveSongs() {
-    localStorage.setItem('songs', JSON.stringify(songs));
+    const songsBase64 = songs.map(song => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                resolve(event.target.result);
+            };
+            reader.onerror = function(error) {
+                reject(error);
+            };
+            reader.readAsDataURL(song);
+        });
+    });
+
+    Promise.all(songsBase64)
+        .then(base64Songs => {
+            localStorage.setItem('songs', JSON.stringify(base64Songs));
+            console.log('Songs saved to localStorage');
+        })
+        .catch(error => {
+            console.error('Error saving songs to localStorage:', error);
+        });
 }
