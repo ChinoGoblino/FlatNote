@@ -1,47 +1,56 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
-</head>
-<body>
-<p class="p1">body {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family: Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 0;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">.container {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>height: 100vh;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">.song-list {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 30%;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background-color: #f0f0f0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 20px;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">.main-content {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 70%;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 20px;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">button {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 10px 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 5px 10px;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">#lyrics {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>white-space: pre-wrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 20px 0;</p>
-<p class="p1">}</p>
-</body>
-</html>
+body {
+
+    font-family: Arial, sans-serif;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+.container {
+
+    display: flex;
+
+    height: 100vh;
+
+}
+
+
+.song-list {
+
+    width: 30%;
+
+    background-color: #f0f0f0;
+
+    padding: 20px;
+
+}
+
+
+.main-content {
+
+    width: 70%;
+
+    padding: 20px;
+
+}
+
+
+button {
+
+    margin: 10px 0;
+
+    padding: 5px 10px;
+
+}
+
+
+#lyrics {
+
+    white-space: pre-wrap;
+
+    margin: 20px 0;
+
+}
