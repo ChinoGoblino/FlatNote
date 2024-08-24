@@ -71,27 +71,32 @@ function toggleRecording() {
     } else {
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
-                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder = new MediaRecorder(stream); // Simplified initialization
+                audioChunks = []; // Clear previous chunks
+
                 mediaRecorder.ondataavailable = event => {
                     audioChunks.push(event.data);
                 };
-                mediaRecorder.onstop = saveRecording;
-                audioChunks = [];
+
+                mediaRecorder.onstop = () => {
+                    saveRecording();
+                };
+
                 mediaRecorder.start();
                 recordBtn.textContent = 'Stop Recording';
                 alert('Recording started!');
             })
             .catch(error => {
                 console.error('Error accessing microphone:', error);
-                alert('Failed to access microphone. Please check your permissions.');
+                alert(`Failed to access microphone: ${error.name}. Please check your microphone permissions in the browser settings.`);
             });
     }
 }
 
 function saveRecording() {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+    const audioBlob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
     const reader = new FileReader();
-    reader.readAsDataURL(audioBlob);
+
     reader.onloadend = function() {
         const base64data = reader.result;
         currentSong.recordings.push({
@@ -103,13 +108,18 @@ function saveRecording() {
         playBtn.disabled = false;
         alert('Recording saved!');
     };
+
+    reader.readAsDataURL(audioBlob);
 }
 
 function playRecording() {
     if (currentSong && currentSong.recordings.length > 0) {
         const latestRecording = currentSong.recordings[currentSong.recordings.length - 1];
         const audio = new Audio(latestRecording.data);
-        audio.play();
+        audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+            alert('Failed to play recording.');
+        });
     } else {
         alert('No recording available to play.');
     }
