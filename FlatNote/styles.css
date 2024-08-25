@@ -12,6 +12,7 @@ html, body {
     padding: 0;
     position: relative;
     font-family: 'Poppins', sans-serif;
+    color: #fff; /* Set all text to white */
 }
 
 /* Background with Infinite Effect */
@@ -89,10 +90,6 @@ body::before {
     border-radius: 15px;
 }
 
-.main-content h1, .record-text, .play-pause-btn, #lyrics, #dates p, #dates span, label {
-    color: #fff; /* Set all text to white */
-}
-
 .main-content h1 {
     font-size: 32px;
     margin-bottom: 20px;
@@ -142,14 +139,28 @@ input[type="file"] {
     transform: scale(0.98);
 }
 
-/* Circular Button Styles */
-.record-btn-container,
+/* Record-Play Container */
+.record-play-container {
+    display: flex;
+    justify-content: space-between; /* Space out the play and record buttons */
+    margin-bottom: 20px;
+    padding: 0 20%; /* Adjust the padding to center the buttons within the container */
+}
+
 .play-pause-btn-container {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* Align play button to the left */
 }
 
+.record-btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Align record button to the right */
+    gap: 10px; /* Add space between the record button and the "Record" text */
+}
+
+/* Circular Button Styles */
 .record-btn, 
 .play-pause-btn {
     width: 60px;
@@ -168,7 +179,6 @@ input[type="file"] {
 .record-btn {
     background-color: #FF0000;
     border: 5px solid #fff;
-    margin-right: 10px;
 }
 
 .record-btn:hover {
@@ -183,9 +193,12 @@ input[type="file"] {
 /* Play/Pause Button */
 .play-pause-btn {
     background-color: #1DB954;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
 }
 
-.play-pause-btn.play::before {
+.play-pause-btn::before {
     content: '';
     display: inline-block;
     width: 0;
@@ -193,15 +206,6 @@ input[type="file"] {
     border-left: 18px solid #1A1A1A;
     border-top: 12px solid transparent;
     border-bottom: 12px solid transparent;
-}
-
-.play-pause-btn.pause::before {
-    content: '';
-    display: inline-block;
-    width: 12px;
-    height: 24px;
-    background-color: #1A1A1A;
-    margin: 0 3px;
 }
 
 .play-pause-btn:hover {
