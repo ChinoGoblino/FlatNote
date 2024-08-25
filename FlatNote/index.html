@@ -1,12 +1,9 @@
-1<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Song Recorder</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,29 +11,27 @@
         <div class="song-list">
             <h2>Songs</h2>
             <ul id="songList"></ul>
-            <form id="uploadForm">
-                <!-- Custom button that triggers the hidden file input -->
-                <label for="mp3File" class="custom-file-upload">
-                    Browse...
-                </label>
-                <input type="file" id="mp3File" accept="audio/mpeg" />
-            </form>
+            <label for="mp3File" class="custom-file-upload">Browse...</label>
+            <input id="mp3File" type="file" accept="audio/mpeg">
         </div>
         <div class="main-content">
             <h1 id="songTitle">Select a Song</h1>
             <div id="lyrics"></div>
-            <div class="record-btn-container">
-                <button id="recordBtn" class="record-btn"></button>
-                <span id="recordText" class="record-text">Record</span>
+            <div class="record-play-container">
+                <div class="play-pause-btn-container">
+                    <button class="play-pause-btn play" id="playPauseBtn"></button>
+                </div>
+                <div class="record-btn-container">
+                    <div class="record-btn" id="recordBtn"></div>
+                    <span id="recordText" class="white-text">Record</span>
+                </div>
             </div>
-            <button id="playPauseBtn" class="play-pause-btn play"></button>
             <div id="dates">
                 <p>Date first recorded: <span id="firstRecorded"></span></p>
                 <p>Date last recorded: <span id="lastRecorded"></span></p>
             </div>
         </div>
     </div>
-    <script src="jsmediatags.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
