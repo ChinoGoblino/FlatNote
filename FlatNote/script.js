@@ -65,24 +65,10 @@ function updateSongList() {
     }
 }
 
-async function fetchLyrics(artist, title) {
-    try {
-        const response = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`);
-        if (!response.ok) {
-            throw new Error('Lyrics not found');
-        }
-        const data = await response.json();
-        return data.lyrics;
-    } catch (error) {
-        console.error('Error fetching lyrics:', error);
-        return 'Lyrics not found';
-    }
-}
-
 function selectSong(song) {
     currentSong = song;
     songTitleElement.textContent = song.title;
-    lyricsElement.textContent = fetchLyrics(song.artist, song.title);
+    lyricsElement.textContent = song.lyrics;
     updateDates();
     recordBtn.disabled = false;
     playPauseBtn.disabled = song.recordings.length === 0;
