@@ -1,4 +1,4 @@
-import * as musicMetadata from 'music-metadata-browser';
+var jsmediatags = window.jsmediatags;
 // Load songs from localStorage or initialize an empty array
 let songs = JSON.parse(localStorage.getItem('songs')) || [];
 let currentSong = null;
@@ -15,7 +15,6 @@ const firstRecordedElement = document.getElementById('firstRecorded');
 const lastRecordedElement = document.getElementById('lastRecorded');
 
 // Event listeners
-document.getElementById('uploadForm').addEventListener('submit', addSong);
 recordBtn.addEventListener('click', toggleRecording);
 playBtn.addEventListener('click', playRecording);
 
@@ -24,58 +23,64 @@ updateSongList();
 recordBtn.disabled = true;
 playBtn.disabled = true;
 
-async function addSong(event) {
+document.getElementById('mp3File').addEventListener('change', function(event) {
     songs = [];
-    const fileInput = document.getElementById('mp3File');
-    const file = fileInput.files[0];
+    const file = event.target.files[0];
 
     if (!file) {
-        alert('Please select a file before uploading.');
+        alert('No file selected.');
         return;
     }
+    let song = {};
 
-    if (file.type !== 'audio/mpeg') {
-        alert('Please upload an MP3 file.');
-        return;
-    }
-
-    // Create a song object that includes metadata
-    const song = {
-        file: file,
-        metadata: {}
-    };
-    alert("Words");
-    try {
-        const arrayBuffer = await file.arrayBuffer();
-        const metadata = await musicMetadata.parseBuffer(arrayBuffer, 'audio/mpeg');
-        song.metadata.title = metadata.common.title || 'N/A';
-        song.metadata.artist = metadata.common.artist || 'N/A';
-        songs.push(song);
-        saveSongs();
-        updateSongList();
-        alert('Song added successfully!');
-    } catch (error) {
-        console.log('Error reading metadata:', error);
-        alert('Failed to read song metadata.');
-    }
-}
+    jsmediatags.read(file, {
+        onSuccess: function(tag) {
+            const tags = tag.tags;
+            song.title = tags.title || 'N/A';
+            song.artist = tags.artist || 'N/A';
+            song.album = tags.album || 'N/A';
+            song.year = tags.year || 'N/A';
+        },
+        onError: function(error) {
+            console.error('Error reading metadata:', error);
+            alert('Failed to read metadata.');
+        }
+    });
+    songs.push(song);
+    saveSongs();
+    updateSongList();
+});
 
 function updateSongList() {
     songListElement.innerHTML = '';
-
-    songs.forEach(song => {
+    for (let i = 0; i < songs.length; i++) {
         const li = document.createElement('li');
-        li.textContent = song.metadata.title || 'N/A';
-
-        li.addEventListener('click', () => selectSong(song));
+        setTimeout(() => {
+            li.textContent = songs[i].title;
+        }, 200);
+        li.addEventListener('click', () => selectSong(songs[i]));
         songListElement.appendChild(li);
-    });
+    }
+}
+
+async function fetchLyrics(artist, title) {
+    try {
+        const response = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`);
+        if (!response.ok) {
+            throw new Error('Lyrics not found');
+        }
+        const data = await response.json();
+        return data.lyrics;
+    } catch (error) {
+        console.error('Error fetching lyrics:', error);
+        return 'Lyrics not found';
+    }
 }
 
 function selectSong(song) {
     currentSong = song;
     songTitleElement.textContent = song.title;
-    lyricsElement.textContent = song.lyrics;
+    lyricsElement.textContent = fetchLyrics(song.artist, song.title);
     updateDates();
     recordBtn.disabled = false;
     playBtn.disabled = song.recordings.length === 0;
@@ -152,25 +157,5 @@ function updateDates() {
 }
 
 function saveSongs() {
-    const songsBase64 = songs.map(song => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                resolve(event.target.result);
-            };
-            reader.onerror = function(error) {
-                reject(error);
-            };
-            reader.readAsDataURL(song);
-        });
-    });
-
-    Promise.all(songsBase64)
-        .then(base64Songs => {
-            localStorage.setItem('songs', JSON.stringify(base64Songs));
-            console.log('Songs saved to localStorage');
-        })
-        .catch(error => {
-            console.error('Error saving songs to localStorage:', error);
-        });
+    localStorage.setItem('songs', JSON.stringify(songs));
 }
