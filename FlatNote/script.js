@@ -26,7 +26,6 @@ recordBtn.disabled = true;
 playPauseBtn.disabled = true;
 
 document.getElementById('mp3File').addEventListener('change', function(event) {
-    songs = [];
     const file = event.target.files[0];
 
     if (!file) {
@@ -42,6 +41,7 @@ document.getElementById('mp3File').addEventListener('change', function(event) {
             song.artist = tags.artist || 'N/A';
             song.album = tags.album || 'N/A';
             song.year = tags.year || 'N/A';
+            song.lyrics = tags.lyrics || 'N/A';
         },
         onError: function(error) {
             console.error('Error reading metadata:', error);
@@ -67,8 +67,9 @@ function updateSongList() {
 
 function selectSong(song) {
     currentSong = song;
+    console.log(song);
     songTitleElement.textContent = song.title;
-    lyricsElement.textContent = song.lyrics;
+    lyricsElement.textContent = song.lyrics.lyrics;
     updateDates();
     recordBtn.disabled = false;
     playPauseBtn.disabled = song.recordings.length === 0;
@@ -181,5 +182,20 @@ function formatDate(isoString) {
 }
 
 function saveSongs() {
-    localStorage.setItem('songs', JSON.stringify(songs));
+    setTimeout(() => {
+        songs = removeDuplicateSongs();
+        localStorage.setItem('songs', JSON.stringify(songs));
+    }, 200);
+}
+
+function removeDuplicateSongs() {
+    const seenTitles = new Set(); // To store unique song titles
+    return songs.filter(song => {
+        if (seenTitles.has(song.title)) {
+            return false; // Duplicate found, filter it out
+        } else {
+            seenTitles.add(song.title); // Add unique title to the set
+            return true; // Keep the song in the array
+        }
+    });
 }
