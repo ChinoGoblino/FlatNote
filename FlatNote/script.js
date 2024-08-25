@@ -6,6 +6,7 @@ let currentSong = null;
 let mediaRecorder;
 let audioChunks = [];
 let playbackAudio = null;
+let audioArray = [];
 
 // DOM elements
 const songListElement = document.getElementById('songList');
@@ -33,28 +34,40 @@ document.getElementById('mp3File').addEventListener('change', function(event) {
         alert('No file selected.');
         return;
     }
+    
+    // Create an audio element to get the duration of the file
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.addEventListener('loadedmetadata', function() {
+        const duration = audio.duration; // Duration in seconds
 
-    jsmediatags.read(file, {
-        onSuccess: function(tag) {
-            const tags = tag.tags;
-            const song = {
-                title: tags.title || 'Unknown Title',
-                artist: tags.artist || 'Unknown Artist',
-                album: tags.album || 'Unknown Album',
-                year: tags.year || 'Unknown Year',
-                lyrics: tags.lyrics || "No lyrics found",
-                fileURL: URL.createObjectURL(file)
-            };
-            songs.push(song);
-            saveSongs();
-            updateSongList();
-        },
-        onError: function(error) {
-            console.error('Error reading metadata:', error);
-            alert('Failed to read metadata.');
-        }
+        jsmediatags.read(file, {
+            onSuccess: function(tag) {
+                const tags = tag.tags;
+                const song = {
+                    title: tags.title || 'Unknown Title',
+                    artist: tags.artist || 'Unknown Artist',
+                    album: tags.album || 'Unknown Album',
+                    year: tags.year || 'Unknown Year',
+                    lyrics: tags.lyrics || "No lyrics found",
+                    duration: duration.toFixed(0),  // Add duration to the song object
+                    fileURL: URL.createObjectURL(file),
+                };
+                songs.push(song);
+                audioArray.push(audio);
+                saveSongs();
+                updateSongList();
+            },
+            onError: function(error) {
+                console.error('Error reading metadata:', error);
+                alert('Failed to read metadata.');
+            }
+        });
     });
+    
+    // Load the audio file to trigger the 'loadedmetadata' event
+    audio.load();
 });
+
 
 function updateSongList() {
     songListElement.innerHTML = '';
@@ -66,10 +79,9 @@ function updateSongList() {
     });
 }
 
-function selectSong(song, index) {
+function selectSong(song) {
     currentSong = song;
-    console.log(song);
-    songTitleElement.textContent = song.title;
+    songTitleElement.textContent = song.title + ' - ' + song.duration + " sec";
     lyricsElement.textContent = song.lyrics.lyrics;
     updateDates();
     recordBtn.disabled = false;
@@ -80,9 +92,10 @@ function selectSong(song, index) {
 function toggleRecording() {
     if (!currentSong) return;
 
+    console.log(currentSong.duration);
+
     if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-        recordTextElement.textContent = 'Record';
+        stopRecording();
     } else {
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
@@ -95,15 +108,28 @@ function toggleRecording() {
 
                 mediaRecorder.onstop = () => {
                     saveRecording();
+                    clearTimeout(recordingTimeout);  // Clear any existing timeout
                 };
 
                 mediaRecorder.start();
                 recordTextElement.textContent = 'Stop Recording';
+
+                // Stop recording after the duration of currentSong.duration (in seconds)
+                setTimeout(() => {
+                    stopRecording();
+                }, parseInt(currentSong.duration) * 1000); // convert to milliseconds
             })
             .catch(error => {
                 console.error('Error accessing microphone:', error);
                 alert(`Failed to access microphone: ${error.name}. Please check your microphone permissions in the browser settings.`);
             });
+    }
+}
+
+function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        recordTextElement.textContent = 'Record';
     }
 }
 
