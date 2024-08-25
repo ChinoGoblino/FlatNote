@@ -73,7 +73,7 @@ body::before {
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
-    color: #fff; /* Ensure song names are white */
+    color: #fff;
 }
 
 .song-list li:hover {
@@ -89,10 +89,13 @@ body::before {
     border-radius: 15px;
 }
 
+.main-content h1, .record-text, .play-pause-btn, #lyrics, #dates p, #dates span, label {
+    color: #fff; /* Set all text to white */
+}
+
 .main-content h1 {
     font-size: 32px;
     margin-bottom: 20px;
-    color: #fff;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
@@ -102,13 +105,41 @@ body::before {
     padding: 10px;
     background-color: #333;
     border-radius: 10px;
-    color: #fff;
     font-size: 18px;
     line-height: 1.5;
 }
 
 input[type="file"] {
     display: none;
+}
+
+/* Browse Button */
+.custom-file-upload {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    background-color: #007bff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin: 10px;
+    text-align: center;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.custom-file-upload:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+}
+
+.custom-file-upload:active {
+    transform: scale(0.98);
 }
 
 /* Circular Button Styles */
@@ -184,12 +215,10 @@ input[type="file"] {
 
 #dates p {
     font-size: 14px;
-    color: #fff;
 }
 
 #dates span {
     font-weight: bold;
-    color: #fff;
 }
 
 /* Responsive Design */
