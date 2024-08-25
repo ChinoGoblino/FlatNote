@@ -79,7 +79,8 @@ function updateSongList() {
     });
 }
 
-function selectSong(song) {
+function selectSong(song, index) {
+    playbackAudio = null;
     currentSong = song;
     songTitleElement.textContent = song.title + ' - ' + song.duration + " sec";
     lyricsElement.textContent = song.lyrics.lyrics;
@@ -96,6 +97,8 @@ function toggleRecording() {
 
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         stopRecording();
+        saveRecording();
+        playbackAudio.pause();
     } else {
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
@@ -112,11 +115,20 @@ function toggleRecording() {
                 };
 
                 mediaRecorder.start();
+
+                // Play the original song while recording
+                playbackAudio = new Audio(currentSong.fileURL);
+                playbackAudio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                    alert('Failed to play audio.');
+                });
                 recordTextElement.textContent = 'Stop Recording';
 
                 // Stop recording after the duration of currentSong.duration (in seconds)
-                setTimeout(() => {
+                recordingTimeout = setTimeout(() => {
                     stopRecording();
+                    saveRecording();
+                    playbackAudio.pause();
                 }, parseInt(currentSong.duration) * 1000); // convert to milliseconds
             })
             .catch(error => {
@@ -130,6 +142,7 @@ function stopRecording() {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
         recordTextElement.textContent = 'Record';
+        playbackAudio.pause();  // Ensure the original song stops when recording stops
     }
 }
 
@@ -148,21 +161,17 @@ function togglePlayPause() {
 }
 
 function playLatestRecordingOrFile() {
-    if (currentSong.fileURL) {
-        playbackAudio = new Audio(currentSong.fileURL);
-    } else if (currentSong.recordings && currentSong.recordings.length > 0) {
-        playbackAudio = new Audio(currentSong.recordings[currentSong.recordings.length - 1].data);
+    if (currentSong.recordings && currentSong.recordings.length > 0) {
+        const lastRecording = currentSong.recordings[currentSong.recordings.length - 1].data;
+        playbackAudio = new Audio(lastRecording);
+        playbackAudio.play().catch(error => {
+            console.error('Error playing audio:', error);
+            alert('Failed to play audio.');
+        });
+        setPlayPauseButtonState('pause');
     } else {
         alert('No recording or file to play.');
-        return;
     }
-
-    playbackAudio.play().catch(error => {
-        console.error('Error playing audio:', error);
-        alert('Failed to play audio.');
-    });
-
-    setPlayPauseButtonState('pause');
 }
 
 function setPlayPauseButtonState(state) {
@@ -176,6 +185,7 @@ function setPlayPauseButtonState(state) {
 }
 
 function saveRecording() {
+    playbackAudio = null;
     const audioBlob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
     const reader = new FileReader();
 
@@ -192,7 +202,6 @@ function saveRecording() {
         saveSongs();
         updateDates();
         playPauseBtn.disabled = false;
-        alert('Recording saved!');
     };
 
     reader.readAsDataURL(audioBlob);
