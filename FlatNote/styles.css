@@ -10,15 +10,13 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    position: relative;
     font-family: 'Poppins', sans-serif;
 }
 
-/* Background with Subtle Wavy Effect */
+/* Background with Infinite Effect */
 body::before {
     content: '';
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -26,21 +24,13 @@ body::before {
     background: linear-gradient(135deg, #FF6700, #39FF14, #FF007F);
     background-size: 200% 200%;
     z-index: -1;
-    animation: wallpaperAnimation 15s ease infinite, wiggleBackground 6s ease infinite;
+    animation: wallpaperAnimation 15s ease infinite;
 }
 
 @keyframes wallpaperAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
-}
-
-@keyframes wiggleBackground {
-    0% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.03) rotate(1deg); }
-    50% { transform: scale(1) rotate(-1deg); }
-    75% { transform: scale(1.03) rotate(1deg); }
-    100% { transform: scale(1) rotate(0deg); }
 }
 
 .container {
@@ -118,70 +108,35 @@ body::before {
 
 input[type="file"] {
     display: none;
-/* Modern Button Styles */
 }
 
-button {
-    display: inline-block;
-    padding: 12px 20px;
-    font-size: 16px;
-    border-radius: 25px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
-    font-family: 'Poppins', sans-serif;
-    color: #fff;
-    background: linear-gradient(135deg, #1DB954, #1ED760);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    margin: 10px;
-    text-align: center;
-}
-
-/* Style the custom file upload button */
-.custom-file-upload,
-button {
-    background-color: #007bff;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    display: inline-block;
-    border-radius: 4px;
-    color: white;
-    padding: 10px 20px;
-    font-weight: bold;
-    margin-left: 10px;
-    text-align: center;
-    min-width: 100px; /* Ensures both buttons have the same minimum width */
-    white-space: nowrap; /* Prevents the text from wrapping */
-}
-
-.custom-file-upload:hover,
-button:hover {
-    background: linear-gradient(135deg, #1ED760, #1DB954);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
-    transform: scale(1.05);
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-/* Record Button (Traditional Style) */
-.record-btn-container {
+/* Circular Button Styles */
+.record-btn-container,
+.play-pause-btn-container {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
-.record-btn {
+.record-btn, 
+.play-pause-btn {
     width: 60px;
     height: 60px;
-    background-color: #FF0000;
     border-radius: 50%;
-    border: 5px solid #fff;
+    border: none;
     cursor: pointer;
-    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.3s, transform 0.2s;
+}
+
+/* Record Button */
+.record-btn {
+    background-color: #FF0000;
+    border: 5px solid #fff;
+    margin-right: 10px;
 }
 
 .record-btn:hover {
@@ -193,25 +148,9 @@ button:active {
     transform: scale(0.95);
 }
 
-.record-text {
-    font-size: 18px;
-    color: #fff;
-}
-
 /* Play/Pause Button */
 .play-pause-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
     background-color: #1DB954;
-    border: none;
-    cursor: pointer;
-    margin: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: box-shadow 0.3s, transform 0.2s;
 }
 
 .play-pause-btn.play::before {
@@ -227,8 +166,8 @@ button:active {
 .play-pause-btn.pause::before {
     content: '';
     display: inline-block;
-    width: 12px;  /* Adjusted width */
-    height: 24px; /* Adjusted height */
+    width: 12px;
+    height: 24px;
     background-color: #1A1A1A;
     margin: 0 3px;
 }

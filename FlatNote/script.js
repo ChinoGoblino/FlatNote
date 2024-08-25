@@ -1,4 +1,5 @@
 var jsmediatags = window.jsmediatags;
+
 // Load songs from localStorage or initialize an empty array
 let songs = JSON.parse(localStorage.getItem('songs')) || [];
 let currentSong = null;
@@ -26,52 +27,50 @@ recordBtn.disabled = true;
 playPauseBtn.disabled = true;
 
 document.getElementById('mp3File').addEventListener('change', function(event) {
-    songs = [];
     const file = event.target.files[0];
 
     if (!file) {
         alert('No file selected.');
         return;
     }
-    let song = {};
 
     jsmediatags.read(file, {
         onSuccess: function(tag) {
             const tags = tag.tags;
-            song.title = tags.title || 'N/A';
-            song.artist = tags.artist || 'N/A';
-            song.album = tags.album || 'N/A';
-            song.year = tags.year || 'N/A';
+            const song = {
+                title: tags.title || 'Unknown Title',
+                artist: tags.artist || 'Unknown Artist',
+                album: tags.album || 'Unknown Album',
+                year: tags.year || 'Unknown Year',
+                fileURL: URL.createObjectURL(file)
+            };
+            songs.push(song);
+            saveSongs();
+            updateSongList();
         },
         onError: function(error) {
             console.error('Error reading metadata:', error);
             alert('Failed to read metadata.');
         }
     });
-    songs.push(song);
-    saveSongs();
-    updateSongList();
 });
 
 function updateSongList() {
     songListElement.innerHTML = '';
-    for (let i = 0; i < songs.length; i++) {
+    songs.forEach((song, index) => {
         const li = document.createElement('li');
-        setTimeout(() => {
-            li.textContent = songs[i].title;
-        }, 200);
-        li.addEventListener('click', () => selectSong(songs[i]));
+        li.textContent = song.title + ' by ' + song.artist;
+        li.addEventListener('click', () => selectSong(song, index));
         songListElement.appendChild(li);
-    }
+    });
 }
 
-function selectSong(song) {
+function selectSong(song, index) {
     currentSong = song;
     songTitleElement.textContent = song.title;
-    lyricsElement.textContent = song.lyrics;
-    updateDates();
+    lyricsElement.textContent = `Artist: ${song.artist}\nAlbum: ${song.album}\nYear: ${song.year}`;
     recordBtn.disabled = false;
-    playPauseBtn.disabled = song.recordings.length === 0;
+    playPauseBtn.disabled = song.fileURL ? false : true; // Enable play button if a file is uploaded
     setPlayPauseButtonState('play');
 }
 
@@ -107,7 +106,7 @@ function toggleRecording() {
 }
 
 function togglePlayPause() {
-    if (!currentSong || currentSong.recordings.length === 0) return;
+    if (!currentSong) return;
 
     if (playbackAudio && !playbackAudio.paused) {
         playbackAudio.pause();
@@ -116,17 +115,25 @@ function togglePlayPause() {
         playbackAudio.play();
         setPlayPauseButtonState('pause');
     } else {
-        playLatestRecording();
+        playLatestRecordingOrFile();
     }
 }
 
-function playLatestRecording() {
-    const latestRecording = currentSong.recordings[currentSong.recordings.length - 1];
-    playbackAudio = new Audio(latestRecording.data);
+function playLatestRecordingOrFile() {
+    if (currentSong.fileURL) {
+        playbackAudio = new Audio(currentSong.fileURL);
+    } else if (currentSong.recordings && currentSong.recordings.length > 0) {
+        playbackAudio = new Audio(currentSong.recordings[currentSong.recordings.length - 1].data);
+    } else {
+        alert('No recording or file to play.');
+        return;
+    }
+
     playbackAudio.play().catch(error => {
         console.error('Error playing audio:', error);
-        alert('Failed to play recording.');
+        alert('Failed to play audio.');
     });
+
     setPlayPauseButtonState('pause');
 }
 
@@ -146,7 +153,10 @@ function saveRecording() {
 
     reader.onloadend = function() {
         const base64data = reader.result;
-        // Replace the latest recording with the new one
+        // Save the new recording in the current song's recordings array
+        if (!currentSong.recordings) {
+            currentSong.recordings = [];
+        }
         currentSong.recordings.push({
             data: base64data,
             date: new Date().toISOString()
@@ -161,8 +171,8 @@ function saveRecording() {
 }
 
 function updateDates() {
-    const firstRecorded = currentSong.recordings[0]?.date || 'N/A';
-    const lastRecorded = currentSong.recordings[currentSong.recordings.length - 1]?.date || 'N/A';
+    const firstRecorded = currentSong.recordings?.[0]?.date || 'N/A';
+    const lastRecorded = currentSong.recordings?.[currentSong.recordings.length - 1]?.date || 'N/A';
     firstRecordedElement.textContent = firstRecorded !== 'N/A' ? formatDate(firstRecorded) : 'N/A';
     lastRecordedElement.textContent = lastRecorded !== 'N/A' ? formatDate(lastRecorded) : 'N/A';
 }
